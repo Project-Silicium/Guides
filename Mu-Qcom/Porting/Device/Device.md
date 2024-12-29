@@ -191,7 +191,7 @@ Here is a template:
   gQcomPkgTokenSpaceGuid.PcdRamPartitionBase|<Free DDR Region Start Address>
 
   # SD Card Slot
-  gQcomPkgTokenSpaceGuid.PcdSDCardSlotPresent|TRUE             # If your Phone has no SD Card Slot, Set it to FALSE.
+  gQcomPkgTokenSpaceGuid.PcdInitCardSlot|TRUE            # If your Phone has no SD Card Slot, Set it to FALSE.
   
   # USB Controller
   gQcomPkgTokenSpaceGuid.PcdStartUsbController|TRUE            # This should be TRUE unless your UsbConfigDxe is Patched to be Dual Role.
