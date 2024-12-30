@@ -144,8 +144,6 @@ Here is a template:
   SKUID_IDENTIFIER               = DEFAULT
   FLASH_DEFINITION               = <Device Codename>Pkg/<Device Codename>.fdf
   USE_CUSTOM_DISPLAY_DRIVER      = 0
-  # Set this to 1 If your Device is A/B Device
-  AB_SLOT_SUPPORT                = 0
   HAS_BUILD_IN_KEYBOARD          = 0
 
   # If your SoC has multimple variants define the Number here
@@ -155,7 +153,7 @@ Here is a template:
 # If your SoC has multiple variants keep these Build Options
 # If not don't add "-DSOC_TYPE=$(SOC_TYPE)" to the Build Options.
 [BuildOptions]
-  *_*_*_CC_FLAGS = -DSOC_TYPE=$(SOC_TYPE) -DAB_SLOT_SUPPORT=$(AB_SLOT_SUPPORT) -DHAS_BUILD_IN_KEYBOARD=$(HAS_BUILD_IN_KEYBOARD)
+  *_*_*_CC_FLAGS = -DSOC_TYPE=$(SOC_TYPE) -DHAS_BUILD_IN_KEYBOARD=$(HAS_BUILD_IN_KEYBOARD)
 
 [LibraryClasses]
   DeviceMemoryMapLib|<Device Codename>Pkg/Library/DeviceMemoryMapLib/DeviceMemoryMapLib.inf
