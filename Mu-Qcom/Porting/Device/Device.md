@@ -158,13 +158,14 @@ Here is a template:
 [LibraryClasses]
   DeviceMemoryMapLib|<Device Codename>Pkg/Library/DeviceMemoryMapLib/DeviceMemoryMapLib.inf
   DeviceConfigurationMapLib|<Device Codename>Pkg/Library/DeviceConfigurationMapLib/DeviceConfigurationMapLib.inf
+  DevicePrePiLib|vayuPkg/Library/DevicePrePiLib/DevicePrePiLib.inf
 
 [PcdsFixedAtBuild]
   # DDR Start Address
   gArmTokenSpaceGuid.PcdSystemMemoryBase|<Start Address>
 
   # Device Maintainer
-  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor|L"<Your Github Name>"
+  gSiliciumPkgTokenSpaceGuid.PcdDeviceMaintainer|"<Your Github Name>"
 
   # CPU Vector Address
   gArmTokenSpaceGuid.PcdCpuVectorBaseAddress|<CPU Vector Base Address>
@@ -204,7 +205,7 @@ Here is a template:
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|<Con Column>
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|<Con Row>
 
-!include <SoC Codename>Pkg/<SoC Codenmae>.dsc.inc
+!include <SoC Codename>Pkg/<SoC Codename>.dsc.inc
 ```
 
 `<GUID>` is a Value to identify your Device, Generate one [here](https://guidgenerator.com/), Make sure its Uppercase. <br />
