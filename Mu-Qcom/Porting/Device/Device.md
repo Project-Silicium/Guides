@@ -158,7 +158,7 @@ Here is a template:
 [LibraryClasses]
   DeviceMemoryMapLib|<Device Codename>Pkg/Library/DeviceMemoryMapLib/DeviceMemoryMapLib.inf
   DeviceConfigurationMapLib|<Device Codename>Pkg/Library/DeviceConfigurationMapLib/DeviceConfigurationMapLib.inf
-  DevicePrePiLib|vayuPkg/Library/DevicePrePiLib/DevicePrePiLib.inf
+  DevicePrePiLib|<Device Codename>Pkg/Library/DevicePrePiLib/DevicePrePiLib.inf
 
 [PcdsFixedAtBuild]
   # DDR Start Address
