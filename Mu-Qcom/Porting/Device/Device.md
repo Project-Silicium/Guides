@@ -44,7 +44,8 @@ To Port UEFI to your Phone, It needs the following things:
 - `fdt` in `/sys/firmware/`
 
 It's also recommended to have already some Knowledge about Linux and Windows. <br />
-~~Also a Brain is required to do this.~~
+~~Also a Brain is required to do this.~~ <br />
+> NOTE: Dont make or edit the files in windows tools (Notepad, Notepad++..), it format the files in windows readable only <br />
 
 ## Copying Files (Step 1)
 
