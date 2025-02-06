@@ -76,14 +76,25 @@ It should contain at least this:
 ```
 # General Configs
 TARGET_DEVICE_VENDOR="<Device Vendor>"
+TARGET_MULTIPLE_MODELS=0
+TARGET_NUMBER_OF_MODELS=0
+
+# Arch Config
+TARGET_ARCH="AARCH64"
 
 # UEFI FD Configs
+TARGET_REQUIRES_BOOTSHIM=1
 TARGET_FD_BASE="<FD Base>"
 TARGET_FD_SIZE="<FD Size>"
 TARGET_FD_BLOCKS="<FD Blocks>"
+
+# FDT Configs
+TARGET_CREATE_POINTER=0
+TARGET_POINTER_ADDRESS=0x0
 ```
 `<FD Base/Size Value>` is the UEFI FD Value in the MemoryMap (uefiplat.cfg). <br />
 `<FD Blocks>` is the Number of Blocks UEFI FD has, `<UEFI FD Size> / 0x1000`.
+`TARGET_ARCH` modify according to your arch.
 
 ## Creating Files (Step 3)
 
@@ -102,6 +113,8 @@ Struckture of the Device Files:
 │   └── DeviceConfigurationMapLib
 │       ├── DeviceConfigurationMapLib.c
 │       └── DeviceConfigurationMapLib.inf
+├──FdtBlob
+|  └── <SoC Codename>-<Device Vendor>-<Device Codename>.dtb
 ├── PlatformBuild.py
 ├── <Device Codename>.dec
 ├── <Device Codename>.dsc
@@ -109,7 +122,6 @@ Struckture of the Device Files:
 ```
 
 ## Creating .dsc & .dec & .fdf File (Step 3.1)
-
 ## Creating .dsc File (Step 3.1.1)
 
 Lets begin with the `.dsc` File <br />
@@ -164,7 +176,7 @@ Here is a template:
   gArmTokenSpaceGuid.PcdSystemMemoryBase|<Start Address>
 
   # Device Maintainer
-  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor|L"<Your Github Name>"
+  gSiliciumPkgTokenSpaceGuid.PcdDeviceMaintainer|"<Your Github Name>"
 
   # CPU Vector Address
   gArmTokenSpaceGuid.PcdCpuVectorBaseAddress|<CPU Vector Base Address>
@@ -315,22 +327,22 @@ READ_LOCK_STATUS   = TRUE
   !include Include/DXE.inc
   !include Include/RAW.inc
 
-  INF EmbeddedPkg/Drivers/VirtualKeyboardDxe/VirtualKeyboardDxe.inf
-
-  # BDS
+   # SmBios
   INF MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-  INF MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
-  INF MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
-
-  # ACPI and SMBIOS
-  INF MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
-  INF MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
   INF <SoC Codename>Pkg/Drivers/SmBiosTableDxe/SmBiosTableDxe.inf
 
-  # ACPI Tables
+  # ACPI
+  INF MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
+  INF MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
+
   !include Include/ACPI.inc
 
-  INF DfciPkg/IdentityAndAuthManager/IdentityAndAuthManagerDxe.inf
+  # Device Tree
+  #INF EmbeddedPkg/Drivers/DtPlatformDxe/DtPlatformDxe.inf
+  #FILE FREEFORM = 25462CDA-221F-47DF-AC1D-259CFAA4E326 {
+  #  SECTION RAW = <Device Codename>Pkg/FdtBlob/<Device DTB>.dtb
+  #  SECTION UI = "DeviceTreeBlob"
+  #}
 
   !include QcomPkg/Extra.fdf.inc
 
@@ -412,7 +424,7 @@ Check other Devices APRIORI.inc File to get an Idea, What to replace with the Mu
 After that we can now move on to `DXE.inc`, Create `DXE.inc` in `Mu-Silicium/Platforms/<Device Vendor>/<Device Codename>Pkg/Include/`. <br />
 Now again we need the Order, To get the order of `DXE.inc` Open `xbl` or `uefi` in UEFITool and Expand the FV(s), Then you see the Order. <br />
 
-<!-- TODO: Add Pictures for DXE.inc! -->
+![Preview](Pictures/DXE.png)
 
 Again we place all the Binaries like this:
 ```
@@ -500,9 +512,12 @@ Create a Folder Named `DeviceMemoryMapLib` in `Mu-Silicium/Platforms/<Device Ven
 After that create two Files called `DeviceMemoryMapLib.c` and `DeviceMemoryMapLib.inf`. <br />
 
 You can either make the Memory Map by yourself or use an automated [Script](https://gist.github.com/N1kroks/0b3942a951a2d4504efe82ab82bc7a50) if your SoC is older than Snapdragon 8 Gen 3 (SM8650).
+~~script also create Configuration Map, remove it from Memory Map~~
 
 If you want to make the Memory Map by yourself, here is a template for the .c File:
 ```c
+#include <Library/DeviceMemoryMapLib.h>
+
 STATIC
 ARM_MEMORY_REGION_DESCRIPTOR_EX
 gDeviceMemoryDescriptorEx[] = {
@@ -539,12 +554,29 @@ After that it should look something like [this](https://github.com/Robotix22/Mu-
 
 The INF can be copied from any other Device.
 
-## Creating Android Boot Image Script (Step 3.5)
+## Getting DTB from the device (Step 3.5)
+
+With root you can get it using adb
+```
+adb shell su -c "dd if=/sys/firmware/fdt of=/sdcard/<Device Codename>.img"
+adb pull /sdcard/<Device Codename>.img .
+```
+Rename it to: `<Device Codename>.dtb`
+and make a Humam Readable Format. <br />
+Obs: This can be maked only on Wsl or an Linux Distro
+```
+dtc -I dtb -O dts -o <Device Codename>.dts <Device Codename>.dtb
+```
+Now copy this files to `Mu-Silicium/Resources/DTBs/`
+
+## Creating Android Boot Image Script (Step 3.6)
 
 You also need to create a Script that creates the Boot Image. <br />
-You can Copy a Device with similear/Same Boot Image Creation Script and just replace the Code Name with yours. <br />
+You can Copy a Device with similear/Same Boot Image Creation Script from `Mu-Silicium/Resources/Scripts/<Device Codename>.sh` and just replace the Code Name with yours. <br />
 If there is no Device with similear Boot Image Creation Script, Extract the Original Android Boot Image with AIK (Android Image Kitchen). <br />
 Then you just use the Info that the Tool Gives you and Put them into the Script.
+
+
 
 ## Building
 
