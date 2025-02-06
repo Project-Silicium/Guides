@@ -28,8 +28,7 @@ This Guide will show you how to create a UEFI Port for your Device. <br />
               - [Creating RAW.inc](#creating-rawinc-step-324)
          - [Creating Config Map](#creating-configurationmap-library-step-33)
          - [Creating MemoryMap](#creating-devicememorymap-library-step-34)
-         - [Getting Device DTB](#getting-dtb-from-the-device-step-35)
-         - [Creating Boot Script](#creating-android-boot-image-script-step-36)
+         - [Creating Boot Script](#creating-android-boot-image-script-step-35)
     - [Building](#building)
     - [Troubleshooting](#troubleshooting)
 
@@ -56,7 +55,21 @@ It's also recommended to have already some Knowledge about Linux and Windows. <b
 ## Copying Files (Step 1)
 
 Lets begin with Copying Files. <br />
-Copy the `fdt` File from `/sys/firmware/` and Place it as `<Device Codename.dtb>` under `./Resources/DTBs/`. <br />
+Copy the `fdt` File from
+`/sys/firmware/` 
+you can get it using adb with root
+```
+adb shell su -c "dd if=/sys/firmware/fdt of=/sdcard/<Device Codename>.img"
+
+adb pull /sdcard/<Device Codename>.img .
+```
+Rename `<Device Codename>.img` to `<Device Codename>.dtb` <br />
+and make a Humam Readable Format. <br />
+> NOTE: This can be maked only on Wsl or an Linux Distro
+```
+dtc -I dtb -O dts -o <Device Codename>.dts <Device Codename>.dtb
+```
+Now copy .dts and .dtb to `Mu-Silicium/Resources/DTBs/` <br />
 Extract your `xbl` or `uefi` from `/dev/block/by-name/` and Place it somewhere you can reach it:
 ```bash
 adb shell
@@ -563,22 +576,7 @@ After that it should look something like [this](https://github.com/Robotix22/Mu-
 
 The INF can be copied from any other Device.
 
-## Getting DTB from the device (Step 3.5)
-
-With root you can get it using adb
-```
-adb shell su -c "dd if=/sys/firmware/fdt of=/sdcard/<Device Codename>.img"
-adb pull /sdcard/<Device Codename>.img .
-```
-Rename `<Device Codename>.img` to `<Device Codename>.dtb` <br />
-and make a Humam Readable Format. <br />
-Obs: This can be maked only on Wsl or an Linux Distro
-```
-dtc -I dtb -O dts -o <Device Codename>.dts <Device Codename>.dtb
-```
-Now copy .dts and .dtb to `Mu-Silicium/Resources/DTBs/`
-
-## Creating Android Boot Image Script (Step 3.6)
+## Creating Android Boot Image Script (Step 3.5)
 
 You also need to create a Script that creates the Boot Image. <br />
 You can Copy a Device with similear/Same Boot Image Creation Script from `Mu-Silicium/Resources/Scripts/<Device Codename>.sh` and just replace the Code Name with yours. <br />
