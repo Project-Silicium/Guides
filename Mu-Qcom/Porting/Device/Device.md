@@ -112,7 +112,7 @@ TARGET_CREATE_POINTER=0
 TARGET_POINTER_ADDRESS=0x0
 ```
 `<FD Base/Size Value>` is the UEFI FD Value in the MemoryMap (uefiplat.cfg). <br />
-`<FD Blocks>` is the Number of Blocks UEFI FD has, `<UEFI FD Size> / 0x1000`.
+`<FD Blocks>` is the Number of Blocks UEFI FD has, `<UEFI FD Size> / 0x1000`.<br />
 `TARGET_ARCH` modify according to your arch.
 
 ## Creating Files (Step 3)
