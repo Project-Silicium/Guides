@@ -524,6 +524,8 @@ OsTypeString = "LA"
 ```
 And don't add `ConfigParameterCount` to the .c File either.
 
+The INF can be copied from any other Device.
+
 ## Creating DeviceMemoryMap Library (Step 3.4)
 
 Lets move on making Memory Map. <br />
@@ -532,7 +534,7 @@ Create a Folder Named `DeviceMemoryMapLib` in `Mu-Silicium/Platforms/<Device Ven
 After that create two Files called `DeviceMemoryMapLib.c` and `DeviceMemoryMapLib.inf`. <br />
 
 You can either make the Memory Map by yourself or use an automated [Script](https://gist.github.com/N1kroks/0b3942a951a2d4504efe82ab82bc7a50) if your SoC is older than Snapdragon 8 Gen 3 (SM8650). <br />
-~~script also create Configuration Map, remove it from Memory Map~~
+>NOTE: script also create Configuration Map, remove it from Memory Map
 
 If you want to make the Memory Map by yourself, here is a template for the .c File:
 ```c
