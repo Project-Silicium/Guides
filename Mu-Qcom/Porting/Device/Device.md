@@ -28,8 +28,8 @@ This Guide will show you how to create a UEFI Port for your Device. <br />
               - [Creating RAW.inc](#creating-rawinc-step-324)
          - [Creating Config Map](#creating-configurationmap-library-step-33)
          - [Creating MemoryMap](#creating-devicememorymap-library-step-34)
-         - [Getting Device DTB](#Getting-DTB-from-the-device-step-36)
-         - [Creating Boot Script](#creating-android-boot-image-script-step-35)
+         - [Getting Device DTB](#getting-dtb-from-the-device-step-35)
+         - [Creating Boot Script](#creating-android-boot-image-script-step-36)
     - [Building](#building)
     - [Troubleshooting](#troubleshooting)
 
