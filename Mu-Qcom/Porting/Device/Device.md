@@ -53,7 +53,7 @@ It's also recommended to have already some Knowledge about Linux and Windows. <b
 
 Lets begin with Copying Files. <br />
 Copy the `fdt` File from
-`/sys/firmware/` 
+`/sys/firmware/` <br />
 you can get it using adb with root
 ```
 adb shell su -c "dd if=/sys/firmware/fdt of=/sdcard/<Device Codename>.img"
