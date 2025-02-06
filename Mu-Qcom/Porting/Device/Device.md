@@ -123,6 +123,7 @@ Struckture of the Device Files:
 ```
 
 ## Creating .dsc & .dec & .fdf File (Step 3.1)
+
 ## Creating .dsc File (Step 3.1.1)
 
 Lets begin with the `.dsc` File <br />
@@ -341,7 +342,7 @@ READ_LOCK_STATUS   = TRUE
   # Device Tree
   #INF EmbeddedPkg/Drivers/DtPlatformDxe/DtPlatformDxe.inf
   #FILE FREEFORM = 25462CDA-221F-47DF-AC1D-259CFAA4E326 {
-  #  SECTION RAW = <Device Codename>Pkg/FdtBlob/<SoC Codename>-<Device Vendor>-<Device Codename>.dtb.dtb
+  #  SECTION RAW = <Device Codename>Pkg/FdtBlob/<SoC Codename>-<Device Vendor>-<Device Codename>.dtb
   #  SECTION UI = "DeviceTreeBlob"
   #}
 
