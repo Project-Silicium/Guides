@@ -55,8 +55,8 @@ Lets begin with Copying Files. <br />
 Copy the `fdt` File from
 `/sys/firmware/` <br />
 you can get it using adb with root
-```
-adb shell su -c "dd if=/sys/firmware/fdt of=/sdcard/<Device Codename>.img"
+```bash
+adb shell "dd if=/sys/firmware/fdt of=/sdcard/<Device Codename>.img"
 
 adb pull /sdcard/<Device Codename>.img .
 ```
