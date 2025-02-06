@@ -44,16 +44,10 @@ To Port UEFI to your Phone, It needs the following things:
 
 It's also recommended to have already some Knowledge about Linux and Windows. <br />
 ~~Also a Brain is required to do this.~~ <br />
-> NOTE: Dont make or edit the files in windows tools (Notepad, Notepad++..), it format the files in windows readable only <br />
 
-**Insted you can use:**
-```
-Vscode
-Linux tools (Wsl too)
-- Nano
-- Vim
-- Touch
-```
+> [!WARNING]
+> Don't edit any Files using Programs like Notepad/++. <br>
+> It will break the Files while Porting!
 
 ## Copying Files (Step 1)
 
