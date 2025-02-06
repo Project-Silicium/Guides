@@ -28,6 +28,7 @@ This Guide will show you how to create a UEFI Port for your Device. <br />
               - [Creating RAW.inc](#creating-rawinc-step-324)
          - [Creating Config Map](#creating-configurationmap-library-step-33)
          - [Creating MemoryMap](#creating-devicememorymap-library-step-34)
+         - [Getting Device DTB](#Getting-DTB-from-the-device-step-36)
          - [Creating Boot Script](#creating-android-boot-image-script-step-35)
     - [Building](#building)
     - [Troubleshooting](#troubleshooting)
@@ -340,7 +341,7 @@ READ_LOCK_STATUS   = TRUE
   # Device Tree
   #INF EmbeddedPkg/Drivers/DtPlatformDxe/DtPlatformDxe.inf
   #FILE FREEFORM = 25462CDA-221F-47DF-AC1D-259CFAA4E326 {
-  #  SECTION RAW = <Device Codename>Pkg/FdtBlob/<Device DTB>.dtb
+  #  SECTION RAW = <Device Codename>Pkg/FdtBlob/<SoC Codename>-<Device Vendor>-<Device Codename>.dtb.dtb
   #  SECTION UI = "DeviceTreeBlob"
   #}
 
@@ -511,7 +512,7 @@ We will use uefiplat.cfg to create the Memory Map. <br />
 Create a Folder Named `DeviceMemoryMapLib` in `Mu-Silicium/Platforms/<Device Vendor>/<Device Codename>Pkg/Library/`. <br />
 After that create two Files called `DeviceMemoryMapLib.c` and `DeviceMemoryMapLib.inf`. <br />
 
-You can either make the Memory Map by yourself or use an automated [Script](https://gist.github.com/N1kroks/0b3942a951a2d4504efe82ab82bc7a50) if your SoC is older than Snapdragon 8 Gen 3 (SM8650).
+You can either make the Memory Map by yourself or use an automated [Script](https://gist.github.com/N1kroks/0b3942a951a2d4504efe82ab82bc7a50) if your SoC is older than Snapdragon 8 Gen 3 (SM8650). <br />
 ~~script also create Configuration Map, remove it from Memory Map~~
 
 If you want to make the Memory Map by yourself, here is a template for the .c File:
@@ -561,13 +562,13 @@ With root you can get it using adb
 adb shell su -c "dd if=/sys/firmware/fdt of=/sdcard/<Device Codename>.img"
 adb pull /sdcard/<Device Codename>.img .
 ```
-Rename it to: `<Device Codename>.dtb`
+Rename `<Device Codename>.img` to `<Device Codename>.dtb` <br />
 and make a Humam Readable Format. <br />
 Obs: This can be maked only on Wsl or an Linux Distro
 ```
 dtc -I dtb -O dts -o <Device Codename>.dts <Device Codename>.dtb
 ```
-Now copy this files to `Mu-Silicium/Resources/DTBs/`
+Now copy .dts and .dtb to `Mu-Silicium/Resources/DTBs/`
 
 ## Creating Android Boot Image Script (Step 3.6)
 
