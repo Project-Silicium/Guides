@@ -71,7 +71,6 @@ and make a Humam Readable Format. <br />
 dtc -I dtb -O dts -o <Device Codename>.dts <Device Codename>.dtb
 ```
 Now copy .dts and .dtb to `Mu-Silicium/Resources/DTBs/`. <br />
-And copy that files to `Mu-Silicium/Resources/DTBs`.
 
 Now extract your `xbl` or `uefi` from `/dev/block/by-name/` and Place it somewhere you can reach it:
 ```bash
