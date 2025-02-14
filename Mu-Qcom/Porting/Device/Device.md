@@ -61,6 +61,10 @@ adb shell "dd if=/sys/firmware/fdt of=/sdcard/<Device Codename>.img"
 adb pull /sdcard/<Device Codename>.img .
 ```
 Rename `<Device Codename>.img` to `<Device Codename>.dtb` <br />
+> NOTE: If it doesn't works for some devices(i.e. stuck on download mode with Samsung logo) try extracting dtb from boot.img
+
+unpack stock boot.img with AIK(Android Image Kitchen) and go to split_img directory. Here you can see boot.img-dtb. <br />
+Rename `boot.img-dtb` to `<Device Codename>.dtb` <br />
 and make a Humam Readable Format. <br />
 > NOTE: This can be maked only on Wsl or an Linux Distro
 ```
@@ -79,10 +83,21 @@ adb pull /<UEFI Partition>.img
 ```
 After Copying the `xbl` File or the `uefi` File, Extract all UEFI Binaries from it with [UEFIReader](https://github.com/WOA-Project/UEFIReader). <br />
 A Compiled Version is Pinned in `#general` in our Discord. <br />
+Also you can compile it yourself:
+```
+# Linux
+# Install dotnet-sdk-8.0 for your distribution
+git clone https://github.com/WOA-Project/UEFIReader.git
+cd UEFIReader/
+dotnet build UEFIReader.sln
+# Now here you have a compiled version. Go to UEFIReader/bin/Debug/net8.0/
+```
 Here is how you Use it:
 ```
 # Windows
 UEFIReader.exe <UEFI Partition>.img out
+# Linux
+./UEFIReader <UEFI Partition>.img out
 ```
 Now Move all the output Files from UEFI Reader in `Mu-Silicium/Binaries/<Device Codename>/`. <br />
 Then Execute `CleanUp.sh` in the Binaries Folder once.
