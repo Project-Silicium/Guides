@@ -221,7 +221,7 @@ Here is a template:
   gEmbeddedTokenSpaceGuid.PcdPrePiStackSize|<UEFI Stack Size>
 
   # SmBios
-  gSiliciumPkgTokenSpaceGuid.PcdSmbiosSystemVendor|"<Device Vendor>"
+  gSiliciumPkgTokenSpaceGuid.PcdSmbiosSystemManufacturer|"<Device Vendor>"
   gSiliciumPkgTokenSpaceGuid.PcdSmbiosSystemModel|"<Device Model>"
   gSiliciumPkgTokenSpaceGuid.PcdSmbiosSystemRetailModel|"<Device Codename>"
   gSiliciumPkgTokenSpaceGuid.PcdSmbiosSystemRetailSku|"<Device_Model>_<Device_Codename>"
@@ -364,7 +364,7 @@ READ_LOCK_STATUS   = TRUE
 
    # SmBios
   INF MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-  INF <SoC Codename>Pkg/Drivers/SmBiosTableDxe/SmBiosTableDxe.inf
+  INF QcomPkg/Drivers/SmBiosTableDxe/SmBiosTableDxe.inf
 
   # ACPI
   INF MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
