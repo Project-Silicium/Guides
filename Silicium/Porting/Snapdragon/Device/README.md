@@ -592,7 +592,7 @@ gDeviceMemoryDescriptorEx[] = {
 ARM_MEMORY_REGION_DESCRIPTOR_EX*
 GetDeviceMemoryMap ()
 {
-    return gDeviceMemoryDescriptorEx;
+  return gDeviceMemoryDescriptorEx;
 }
 ```
 
