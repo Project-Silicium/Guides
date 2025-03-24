@@ -657,6 +657,9 @@ If you translate that into C it would look like this:
 Also, If a Name has a `_`, Replace it with a Space. <br />
 Here is a List What from the DTB Memory Region is what in your C Code:
 
+> [!WARNING]
+> Don't add Memory regions with BuildHop = `09` / `NoMap` <br>
+
 **ResourceAttribute:** <br />
 `0x400 `   = `UNCACHEABLE` <br />
 `0x703C07` = `SYS_MEM_CAP` <br />
