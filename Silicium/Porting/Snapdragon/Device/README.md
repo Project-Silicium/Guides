@@ -573,20 +573,20 @@ If you want to make the Memory Map by yourself, here is a template for the .c Fi
 STATIC
 ARM_MEMORY_REGION_DESCRIPTOR_EX
 gDeviceMemoryDescriptorEx[] = {
-    // Name                   Address     Length    HobOpt  ResType  ResAttribute MemType   ArmAttribute (Cache)
-    // DDR Regions          ----------- ----------- ------- -------- ------------ ------- ------------------------
+  // Name                   Address     Length    HobOpt  ResType  ResAttribute MemType   ArmAttribute (Cache)
+  // DDR Regions          ----------- ----------- ------- -------- ------------ ------- ------------------------
 
 
-    // Name                   Address     Length    HobOpt  ResType  ResAttribute MemType   ArmAttribute (Cache)
-    // Other memory regions ----------- ----------- ------- -------- ------------ ------- ------------------------
+  // Name                   Address     Length    HobOpt  ResType  ResAttribute MemType   ArmAttribute (Cache)
+  // Other memory regions ----------- ----------- ------- -------- ------------ ------- ------------------------
 
 
-    // Name                   Address     Length    HobOpt  ResType  ResAttribute MemType   ArmAttribute (Cache)
-    // Register regions     ----------- ----------- ------- -------- ------------ ------- ------------------------
+  // Name                   Address     Length    HobOpt  ResType  ResAttribute MemType   ArmAttribute (Cache)
+  // Register regions     ----------- ----------- ------- -------- ------------ ------- ------------------------
 
 
-    // Terminator for MMU
-    {"Terminator", 0, 0, 0, 0, 0, 0, 0}
+  // Terminator for MMU
+  {"Terminator", 0, 0, 0, 0, 0, 0, 0}
 };
 
 ARM_MEMORY_REGION_DESCRIPTOR_EX*
