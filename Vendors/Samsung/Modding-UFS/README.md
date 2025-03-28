@@ -36,7 +36,7 @@ Before you can beginn modding your UFS, You need to prepare some Things first. <
 You will need the TWRP Recovery for your Device and [Mass Storage](../../../SoCs/Snapdragon/Mass-Storage/README.md) for your Device. <br>
 Follow the Mass Storage Guide and come back here once you got it Running.
 
-Once you have Mass Storage running on your Device, Download [gdisk](https://cdn.discordapp.com/attachments/1057409313381040261/1319684671486824478/gdisk?ex=67e21fe0&is=67e0ce60&hm=6b6f8f17510bc5e8b59773ab018efc9a684aaa8828e88902a7857454088d3993&) and save it somewhere where you will Find it again, Best would be the Download Folder. <br>
+Once you have Mass Storage running on your Device, Download [gdisk](https://cdn.discordapp.com/attachments/1057409313381040261/1319684671486824478/gdisk?ex=67e765e0&is=67e61460&hm=a466cbcc47cbb5bd6b8971c8a8d1310341de355d15906d2fd01bf9c4471fa14b&) and save it somewhere where you will Find it again, Best would be the Download Folder. <br>
 After you Downloaded the File, Push it to your Device using this Command:
 ```cmd
 adb push gdisk /cache/
