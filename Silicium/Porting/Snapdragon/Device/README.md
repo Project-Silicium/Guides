@@ -44,6 +44,7 @@ To Port UEFI to your Phone, It needs the following things:
 - An Snapdragon SoC
 - `xbl` or `uefi` in `/dev/block/by-name/`
 - `fdt` in `/sys/firmware/`
+- `xbl_config` in `/dev/block/by-name/` [Required for Snapdragon 8(s) Gen 3 (SM8650/SM8635) or newer devices] 
 
 It's also recommended to have already some Knowledge about Linux and Windows. <br />
 ~~Also a Brain is required to do this.~~ <br />
@@ -84,8 +85,19 @@ exit
 
 adb pull /<UEFI Partition>.img
 ```
+For Snapdragon 8(s) Gen 3 or newer devices `xbl_config.img` is also required from now on, since MemoryMap (which we will work later on) has been moved to there. <br />
+Here is how you get it:
+```bash
+adb shell
+
+dd if=/dev/block/by-name/<xbl_config Partition> of=/<xbl_config Partition>.img
+exit
+
+adb pull /<xbl_config Partition>.img
+```
+
 After Copying the `xbl` File or the `uefi` File, Extract all UEFI Binaries from it with [UEFIReader](https://github.com/WOA-Project/UEFIReader). <br />
-A Compiled Version is Pinned in `#general` in our Discord. <br />
+A Compiled Version is pinned in `#general` in our Discord server. <br />
 Also you can compile it yourself:
 ```
 # Linux
@@ -547,11 +559,11 @@ The INF can be copied from any other Device.
 ## Creating DeviceMemoryMap Library (Step 3.4)
 
 Lets move on making Memory Map. <br />
-We will use uefiplat.cfg to create the Memory Map. <br />
+For Snapdragon 8 Gen 2 (SM8550) or older SoCs we will use uefiplat.cfg to create the Memory Map. <br />
 Create a Folder Named `DeviceMemoryMapLib` in `Mu-Silicium/Platforms/<Device Vendor>/<Device Codename>Pkg/Library/`. <br />
 After that create two Files called `DeviceMemoryMapLib.c` and `DeviceMemoryMapLib.inf`. <br />
 
-You can either make the Memory Map by yourself or use an automated [Script](https://gist.github.com/N1kroks/0b3942a951a2d4504efe82ab82bc7a50) if your SoC is older than Snapdragon 8 Gen 3 (SM8650). <br />
+You can either make the Memory Map by yourself or use an automated [Script](https://gist.github.com/N1kroks/0b3942a951a2d4504efe82ab82bc7a50) if your SoC is Snapdragon 8 Gen 2 (SM8550) or older. <br />
 >NOTE: script also create Configuration Map, remove it from Memory Map
 
 If you want to make the Memory Map by yourself, here is a template for the .c File:
@@ -561,13 +573,17 @@ If you want to make the Memory Map by yourself, here is a template for the .c Fi
 STATIC
 ARM_MEMORY_REGION_DESCRIPTOR_EX
 gDeviceMemoryDescriptorEx[] = {
-  // Name, Address, Length, HobOption, ResourceAttribute, ArmAttributes, ResourceType, MemoryType
+  // Name                   Address     Length    HobOpt  ResType  ResAttribute MemType   ArmAttribute (Cache)
+  // DDR Regions          ----------- ----------- ------- -------- ------------ ------- ------------------------
 
-  // DDR Regions
 
-  // Other memory regions
+  // Name                   Address     Length    HobOpt  ResType  ResAttribute MemType   ArmAttribute (Cache)
+  // Other memory regions ----------- ----------- ------- -------- ------------ ------- ------------------------
 
-  // Register regions
+
+  // Name                   Address     Length    HobOpt  ResType  ResAttribute MemType   ArmAttribute (Cache)
+  // Register regions     ----------- ----------- ------- -------- ------------ ------- ------------------------
+
 
   // Terminator for MMU
   {"Terminator", 0, 0, 0, 0, 0, 0, 0}
@@ -592,7 +608,96 @@ Do that with every Memory Region but if there's an `#` is infront of an Memory R
 
 After that it should look something like [this](https://github.com/Robotix22/Mu-Silicium/blob/main/Platforms/Xiaomi/limePkg/Library/DeviceMemoryMapLib/DeviceMemoryMapLib.c).
 
-The INF can be copied from any other Device.
+
+For Snapdragon 8(s) Gen 3 (SM8650/SM8635) or newer devices we will use `post-ddr-<platform codename>-1.0.dts` from `xbl_config.img`, since Qualcomm have changed MemoryMap format. <br />
+Unpack `xbl_config.img`, which we have extracted earlier from your device, using [XBLConfigReader](https://github.com/Project-Aloha/XBLConfigReader). <br />
+A Compiled Version is pinned in `#general` in our Discord server. <br />
+Also you can compile it yourself:
+```
+# Linux
+# Install cmake for your distribution
+git clone https://github.com/woa-msmnile/XBLConfigReader --depth=1
+cd XBLConfigReader
+mkdir build && cd build
+cmake -S .. && cmake --build .
+mkdir out
+# Now here you have a compiled version. Go to XBLConfigReader/build/
+```
+Here is how you Use it:
+```
+# Windows
+¯\_(ツ)_/¯
+# Linux
+./xcreader <xbl_config Partition>.img out
+```
+After you unpacked `xbl_config.img`, go into `out` directory and find a file called `post-ddr-<platform codename>-1.0.dtb`. convert it into `.dts` file:
+```
+dtc -I dtb -O dts -o post-ddr-<platform codename>-1.0.dts post-ddr-<platform codename>-1.0.dtb
+```
+Now lets take a closer look at new MemoryMap format:
+```
+# This is an example region.
+memory@80000000 {
+  device_type = "memory";
+  reg = <0x00 0x80000000 0x00 0x16e0000>;
+  MemLabel = "NOMAP";
+  ResourceAttribute = <0x400>;
+  BuildHob = [09];
+  ResourceType = [05];
+  MemoryType = [00];
+  CacheAttributes = [25];
+};
+```
+If you translate that into C it would look like this:
+```c
+// Name                   Address     Length    HobOpt  ResType  ResAttribute MemType   ArmAttribute (Cache)
+// Register regions     ----------- ----------- ------- -------- ------------ ------- ------------------------
+{"NOMAP",               0x80000000, 0x016e0000, AddMem, MEM_RES, UNCACHEABLE, Reserv, UNCACHED_UNBUFFERED_XN},
+```
+Also, If a Name has a `_`, Replace it with a Space. <br />
+Here is a List What from the DTB Memory Region is what in your C Code:
+
+> [!WARNING]
+> Don't add Memory regions with BuildHop = `09` / `NoMap` <br>
+
+**ResourceAttribute:** <br />
+`0x400 `   = `UNCACHEABLE` <br />
+`0x703C07` = `SYS_MEM_CAP` <br />
+`0x02`     = `INITIALIZED` <br />
+
+
+**BuildHob:** <br />
+`0A` = `AddDynamicMem (Use AddMem instead)` <br />
+`09` = `NoMap` (Don't add Memory Region if it has this) <br />
+`05` = `AddDev` <br />
+`04` = `NoHob` <br />
+`00` = `AddMem` <br />
+
+
+**ResourceType:** <br />
+`05` = `MEM_RES` <br />
+`01` = `MMAP_IO` <br />
+`00` = `SYS_MEM` <br />
+
+
+**MemoryType:** <br />
+`0B` = `MmIO` <br />
+`07` = `Conv` <br />
+`04` = `BsData` <br />
+`00` = `Reserv` <br />
+`06` = `RtData` <br />
+
+
+**CacheAttributes:** <br />
+`25` = `UNCACHED_UNBUFFERED_XN` <br />
+`22` = `WRITE_BACK_XN` <br />
+`20` = `WRITE_THROUGH_XN` <br />
+`02` = `WRITE_BACK` <br />
+`09` = `NS_DEVICE` <br />
+
+After that it should look something like [this](https://github.com/Project-Silicium/Mu-Silicium/blob/main/Platforms/Realme/balePkg/Library/DeviceMemoryMapLib/DeviceMemoryMapLib.c)
+
+When you are done with MemoryMap, copy INF file from any other Device.
 
 ## Creating Android Boot Image Script (Step 3.5)
 
