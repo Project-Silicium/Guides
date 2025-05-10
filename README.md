@@ -2,7 +2,7 @@
 
 ## [General Guides](General/README.md)
 
-  - This Section contains Guides like: Installing Windows/Linux.
+  - This Section contains Guides like: Installing Windows or Linux.
 
 ---
 
