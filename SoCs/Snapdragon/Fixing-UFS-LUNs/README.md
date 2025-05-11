@@ -70,18 +70,13 @@ After that, Just run gdisk on the new Disk:
 .\gdisk64.exe [Disk Number]:
 ```
 
-You should now see Text like in this Picture:
+You should now see Text like in this Pictures:
 
 ![Preview](Pictures/Preview-4.png)
+![Preview](Pictures/Preview-5.png)
 
-If you see this Warning in your Command Prompt:
-```
-****************************************************************************
-Caution: Found protective or hybrid MBR and corrupt GPT. Using GPT, but disk
-verification and recovery are STRONGLY recommended.
-****************************************************************************
-```
-Then you need to Repair the GPT Table, Otherwise, Ignore this Step.
+If you see the GPT Corrupted Warning in your Command Prompt like in the second Picture, then you need to Repair the GPT Table. <br>
+Otherwise you can Skip this Step to repair the GPT Table.
 
 To do that, Enter `r`, That will enter the Recovery Options. <br>
 Once you did that, Enter `c` and confirm with `y`, That will repair the GPT Table. <br>
@@ -114,8 +109,13 @@ Save the Changes by entering `w` and confirming with `y`.
 
 ## Verify Changes
 
-Now reopen gdisk again and Check if you see Corrupted GPT Warning, If you do, Enter `r`. <br>
-Then enter `c` and confirm with `y`, That Fixes the GPT Table, Then save the Changes again using `w` and confirming with `y`. <br>
+Now reopen gdisk again and Check if you see Corrupted GPT Warning:
+
+![Preview](Pictures/Preview-5.png)
+
+If you do, Enter `r`, then enter `c` and confirm with `y`, That Fixes the GPT Table, <br>
+Now save the Changes again using `w` and confirming with `y`.
+
 Reopen gdisk again to Check if the Corrupted GPT Warning is Gone and if the 2 Problems in `v` are Gone. <br>
 If they are, Exit gdisk with `q` and Press Volume Up on your Device, Select the next LUN and Follow [Repairing UFS LUNs](#repairing-ufs-luns) Section + this Section again.
 
