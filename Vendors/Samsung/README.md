@@ -1,8 +1,5 @@
 ## Samsung Guides
 
-> [!WARNING]
-> These Guides are Outdated! Remasters of these Guides will come soon.
+## [Modifying your UFS](Modding-UFS/README.md)
 
-## [Fixing UFS](Fixing-UFS/README.md)
-
-  - This Guide Explains how you Fix the UFS on Samsung Devices.
+  - This Guide Explains how you Mod your UFS to Allow Windows/Linux Boot.

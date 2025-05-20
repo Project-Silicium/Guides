@@ -2,7 +2,7 @@
 
 ## Video Guide
 
-> ![NOTE]
+> [!NOTE]
 > No Video Guide here yet.
 
 ## Text Guide [Recommended]
