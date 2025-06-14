@@ -44,6 +44,7 @@ To Port UEFI to your Phone, It needs the following things:
 - An Snapdragon SoC
 - `xbl` or `uefi` in `/dev/block/by-name/`
 - `fdt` in `/sys/firmware/`
+- `xbl_config` in `/dev/block/by-name/` [Required for Snapdragon 8(s) Gen 3 (SM8650/SM8635) or newer devices] 
 
 It's also recommended to have already some Knowledge about Linux and Windows. <br />
 ~~Also a Brain is required to do this.~~ <br />
@@ -84,8 +85,19 @@ exit
 
 adb pull /<UEFI Partition>.img
 ```
+For Snapdragon 8(s) Gen 3 or newer devices `xbl_config.img` is also required from now on, since MemoryMap (which we will work later on) has been moved to there. <br />
+Here is how you get it:
+```bash
+adb shell
+
+dd if=/dev/block/by-name/<xbl_config Partition> of=/<xbl_config Partition>.img
+exit
+
+adb pull /<xbl_config Partition>.img
+```
+
 After Copying the `xbl` File or the `uefi` File, Extract all UEFI Binaries from it with [UEFIReader](https://github.com/WOA-Project/UEFIReader). <br />
-A Compiled Version is Pinned in `#general` in our Discord. <br />
+A Compiled Version is pinned in `#general` in our Discord server. <br />
 Also you can compile it yourself:
 ```
 # Linux
@@ -420,7 +432,201 @@ READ_LOCK_STATUS   = TRUE
 
 ## Creating .fdf.inc Files (Step 3.2)
 
-Now we create some files for the `.fdf` File
+Now we create some files for the `.fdf` File. For easier work with drivers, here is the sheet with necessary information.
+### LG Drivers
+
+| UEFITool Driver Name | New Driver  Name | Driver Path                                                    | Should be Added |
+|:---------------------|:-----------------|:---------------------------------------------------------------|:---------------:|
+| AkmuDxe              | ...              | Binaries/[Device Codename]/QcomPkg/Drivers/AkmuDxe/AkmuDxe.inf | ✅              |
+| SidDxe               | ...              | Binaries/[Device Codename]/QcomPkg/Drivers/SidDxe/SidDxe.inf   | ✅              |
+
+### Motorola Drivers
+
+| UEFITool Driver Name | New Driver  Name | Driver Path                                                                              | Should be Added |
+|:---------------------|:-----------------|:-----------------------------------------------------------------------------------------|:---------------:|
+| AbDxe                | ...              | Binaries/[Device Codename]/MbmPkg/Core/Drivers/AbDxe/AbDxe.inf                           | ✅              |
+| BacklightDxe         | ...              | Binaries/[Device Codename]/MbmPkg/Core/Drivers/BacklightDxe/BacklightDxe.inf             | ✅              |
+| MbmModeDxe           | ...              | Binaries/[Device Codename]/MbmPkg/Core/Drivers/MbmModeDxe/MbmModeDxe.inf                 | ✅              |
+| MotBootFlagsDxe      | ...              | Binaries/[Device Codename]/MbmPkg/Core/Drivers/MotBootFlagsDxe/MotBootFlagsDxe.inf       | ✅              |
+| MotCoreServicesDxe   | ...              | Binaries/[Device Codename]/MbmPkg/Core/Drivers/MotCoreServicesDxe/MotCoreServicesDxe.inf | ✅              |
+| MotHwIdDxe           | ...              | Binaries/[Device Codename]/MbmPkg/Core/Drivers/MotHwIdDxe/MotHwIdDxe.inf                 | ✅              |
+| MotSolDxe            | ...              | Binaries/[Device Codename]/MbmPkg/Core/Drivers/MotSolDxe/MotSolDxe.inf                   | ✅              |
+| MotStorageDxe        | ...              | Binaries/[Device Codename]/MbmPkg/Core/Drivers/MotStorageDxe/MotStorageDxe.inf           | ✅              |
+| MotUtagsDictDxe      | ...              | Binaries/[Device Codename]/MbmPkg/Core/Drivers/MotUtagsDictDxe/MotUtagsDictDxe.inf       | ✅              |
+| MotUtagsDxe          | ...              | Binaries/[Device Codename]/MbmPkg/Core/Drivers/MotUtagsDxe/MotUtagsDxe.inf               | ✅              |
+
+### Nothing Drivers
+
+| UEFITool Driver Name   | New Driver  Name | Driver Path                                                                              | Should be Added |
+|:-----------------------|:-----------------|:-----------------------------------------------------------------------------------------|:---------------:|
+| BootloaderLoggingDxe   | ...              | Binaries/[Device Codename]/QcomPkg/Drivers/BootloaderLoggingDxe/BootloaderLoggingDxe.inf | ❌              |
+| DeviceInfoDxeDriver    | DeviceInfoDxe    | Binaries/[Device Codename]/QcomPkg/Drivers/DeviceInfoDxe/DeviceInfoDxe.inf               | ✅              |
+| NT_DeviceInfoDxeDriver | NT_DeviceInfoDxe | Binaries/[Device Codename]/QcomPkg/Drivers/NT_DeviceInfoDxe/NT_DeviceInfoDxe.inf         | ✅              |
+| SoftSKUDxe             | ...              | Binaries/[Device Codename]/QcomPkg/Drivers/SoftSKUDxe/SoftSKUDxe.inf                     | ✅              |
+
+### OnePlus Drivers
+
+| UEFITool Driver Name | New Driver  Name | Driver Path                                                                      | Should be Added |
+|:---------------------|:-----------------|:---------------------------------------------------------------------------------|:---------------:|
+| OGaugeAuthDxe        | OGaugeAuth       | Binaries/[Device Codename]/QcomPkg/Drivers/OGaugeAuthDxe/OGaugeAuth.inf          | ✅              |
+| OplusProject         | ...              | Binaries/[Device Codename]/QcomPkg/Drivers/OcdtDxe/OplusProject.inf              | ✅              |
+| OplusOrdump          | ...              | Binaries/[Device Codename]/QcomPkg/Drivers/OplusOrdumpDxe/OplusOrdump.inf        | ❌              |
+| OplusSecurityDxe     | ...              | Binaries/[Device Codename]/QcomPkg/Drivers/OplusSecurityDxe/OplusSecurityDxe.inf | ✅              |
+| OplusVibrDxe         | ...              | Binaries/[Device Codename]/QcomPkg/Drivers/OplusVibrDxe/OplusVibrDxe.inf         | ✅              |
+| PhoenixDxe           | ...              | Binaries/[Device Codename]/QcomPkg/Drivers/PhoenixDxe/PhoenixDxe.inf             | ✅              |
+| UFSUpgradeDxe        | ...              | Binaries/[Device Codename]/QcomPkg/OnePlusPkg/OnePlusUFS/UFSUpgradeDxe.inf       | ✅              |
+
+### Project Mu Drivers
+
+| UEFITool Driver Name     | New Driver  Name                 | Driver Path                                                                                   | Should be Added |
+|:-------------------------|:---------------------------------|:----------------------------------------------------------------------------------------------|:---------------:|
+| ArmCpuDxe                | CpuDxe                           | ArmPkg/Drivers/CpuDxe/CpuDxe.inf                                                              | ✅              |
+| ArmGicDxe                | ...                              | ArmPkg/Drivers/ArmGic/ArmGicDxe.inf                                                           | ✅              |
+| ArmTimerDxe              | TimerDxe                         | ArmPkg/Drivers/TimerDxe/TimerDxe.inf                                                          | ✅              |
+| CapsuleRuntimeDxe        | ...                              | MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf                                | ✅              |
+| ConPlatformDxe           | ...                              | MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf                              | ✅              |
+| ConSplitterDxe           | ...                              | MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf                              | ✅              |
+| DevicePathDxe            | ...                              | MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf                                        | ✅              |
+| DiskIoDxe                | ...                              | MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf                                           | ✅              |
+| DxeCore                  | DxeMain                          | MdeModulePkg/Core/Dxe/DxeMain.inf                                                             | ✅              |
+| EmbeddedMonotonicCounter | ...                              | EmbeddedPkg/EmbeddedMonotonicCounter/EmbeddedMonotonicCounter.inf                             | ✅              |
+| FvSimpleFileSystem       | FvSimpleFileSystemDxe            | MdeModulePkg/Universal/FvSimpleFileSystemDxe/FvSimpleFileSystemDxe.inf                        | ❌              |
+| EnglishDxe               | ...                              | MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf                        | ✅              |
+| Fat                      | ...                              | FatPkg/EnhancedFatDxe/Fat.inf                                                                 | ✅              |
+| GraphicsConsoleDxe       | ...                              | MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf                      | ✅              |
+| HiiDatabase              | HiiDatabaseDxe                   | MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf                                      | ✅              |
+| MetronomeDxe             | ...                              | EmbeddedPkg/MetronomeDxe/MetronomeDxe.inf                                                     | ✅              |
+| PartitionDxe             | ...                              | MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf                                     | ✅              |
+| PrintDxe                 | ...                              | MdeModulePkg/Universal/PrintDxe/PrintDxe.inf                                                  | ✅              |
+| QcomBds                  | BdsDxe                           | MdeModulePkg/Universal/BdsDxe/BdsDxe.inf                                                      | ✅              |
+| RealTimeClock            | RealTimeClockRuntimeDxe          | EmbeddedPkg/RealTimeClockRuntimeDxe/RealTimeClockRuntimeDxe.inf                               | ✅              |
+| ResetRuntimeDxe          | ResetSystemRuntimeDxe            | MdeModulePkg/Universal/ResetSystemRuntimeDxe/ResetSystemRuntimeDxe.inf                        | ✅              |
+| RscRtDxe                 | ReportStatusCodeRouterRuntimeDxe | MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf | ✅              |
+| RuntimeDxe               | ...                              | MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf                                                   | ✅              |
+| SCHandlerRtDxe           | StatusCodeHandlerRuntimeDxe      | MdeModulePkg/Universal/StatusCodeHandler/RuntimeDxe/StatusCodeHandlerRuntimeDxe.inf           | ✅              |
+| SecurityStubDxe          | ...                              | MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf                                    | ✅              |
+| SimpleTextInOutSerial    | ...                              | EmbeddedPkg/SimpleTextInOutSerial/SimpleTextInOutSerial.inf                                   | ✅              |
+| VariableDxe              | VariableRuntimeDxe               | MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf                             | ✅              |
+| WatchdogTimer            | ...                              | MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf                                     | ✅              |
+| UsbBusDxe                | ...                              | MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf                                                  | ✅              |
+| UsbKbDxe                 | ...                              | MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf                                                    | ✅              |
+| UsbMassStorageDxe        | ...                              | MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf                                  | ✅              |
+
+### Qualcomm Drivers
+
+| UEFITool Driver Name  | New Driver  Name    | Driver Path                                                                            | Should be Added |
+|:----------------------|:--------------------|:---------------------------------------------------------------------------------------|:---------------:|
+| AdcDxe                | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/AdcDxe/AdcDxe.inf                           | ✅              |
+| ASN1X509Dxe           | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/ASN1X509Dxe/ASN1X509Dxe.inf                 | ❌              |
+| ButtonsDxe            | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/ButtonsDxe/ButtonsDxe.inf                   | ✅              |
+| ChargerExDxe          | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/ChargerExDxe/ChargerExDxe.inf               | ✅              |
+| ChipInfo              | ChipInfoDxe         | Binaries/[Device Codename]/QcomPkg/Drivers/ChipInfoDxe/ChipInfoDxe.inf                 | ✅              |
+| CipherDxe             | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/CipherDxe/CipherDxe.inf                     | ✅              |
+| ClockDxe              | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/ClockDxe/ClockDxe.inf                       | ✅              |
+| CmdDbDxe              | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/CmdDbDxe/CmdDbDxe.inf                       | ✅              |
+| CPRDxe                | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/CPRDxe/CPRDxe.inf                           | ✅              |
+| DALSys                | DALSYSDxe           | Binaries/[Device Codename]/QcomPkg/Drivers/DALSYSDxe/DALSYSDxe.inf                     | ✅              |
+| DALTLMM               | TLMMDxe             | Binaries/[Device Codename]/QcomPkg/Drivers/TLMMDxe/TLMMDxe.inf                         | ✅              |
+| DDRInfoDxe            | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/DDRInfoDxe/DDRInfoDxe.inf                   | ✅              |
+| DisplayDxe            | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/DisplayDxe/DisplayDxe.inf                   | ✅              |
+| EnvDxe                | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/EnvDxe/EnvDxe.inf                           | ✅              |
+| FeatureEnablerDxe     | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/FeatureEnablerDxe/FeatureEnablerDxe.inf     | ✅              |
+| FontDxe               | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/FontDxe/FontDxe.inf                         | ✅              |
+| FvDxe                 | FvUtilsDxe          | Binaries/[Device Codename]/QcomPkg/Drivers/FvUtilsDxe/FvUtilsDxe.inf                   | ✅              |
+| GlinkDxe              | GLinkDxe            | Binaries/[Device Codename]/QcomPkg/Drivers/GLinkDxe/GLinkDxe.inf                       | ✅              |
+| GpiDxe                | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/GpiDxe/GpiDxe.inf                           | ✅              |
+| HashDxe               | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/HashDxe/HashDxe.inf                         | ✅              |
+| HALIOMMU              | HALIOMMUDxe         | Binaries/[Device Codename]/QcomPkg/Drivers/HALIOMMUDxe/HALIOMMUDxe.inf                 | ✅              |
+| HWIODxeDriver         | HWIODxe             | Binaries/[Device Codename]/QcomPkg/Drivers/HWIODxe/HWIODxe.inf                         | ✅              |
+| I2C                   | I2CDxe              | Binaries/[Device Codename]/QcomPkg/Drivers/I2CDxe/I2CDxe.inf                           | ✅              |
+| I2cHapticDxe          | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/I2cHapticDxe/I2cHapticDxe.inf               | ✅              |
+| ICBDxe                | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/ICBDxe/ICBDxe.inf                           | ✅              |
+| IPCCDxe               | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/IPCCDxe/IPCCDxe.inf                         | ✅              |
+| LimitsDxe             | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/LimitsDxe/LimitsDxe.inf                     | ✅              |
+| MacDxe                | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/MacDxe/MacDxe.inf                           | ✅              |
+| MdtpDxe               | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/MdtpDxe/MdtpDxe.inf                         | ✅              |
+| MinidumpTADxe         | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/MinidumpTADxe/MinidumpTADxe.inf             | ✅              |
+| MpPowerDxe            | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/MpPowerDxe/MpPowerDxe.inf                   | ✅              |
+| NpaDxe                | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/NpaDxe/NpaDxe.inf                           | ✅              |
+| ParserDxe             | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/ParserDxe/ParserDxe.inf                     | ✅              |
+| PdcDxe                | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/PdcDxe/PdcDxe.inf                           | ✅              |
+| PILDxe                | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/PILDxe/PILDxe.inf                           | ✅              |
+| PILProxyDxe           | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/PILProxyDxe/PILProxyDxe.inf                 | ✅              |
+| PlatformInfoDxeDriver | PlatformInfoDxe     | Binaries/[Device Codename]/QcomPkg/Drivers/PlatformInfoDxe/PlatformInfoDxe.inf         | ✅              |
+| PmicDxe               | PmicDxeLa           | Binaries/[Device Codename]/QcomPkg/Drivers/PmicDxe/PmicDxeLa.inf                       | ✅              |
+| PmicGlinkDxe          | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/PmicGlinkDxe/PmicGlinkDxe.inf               | ✅              |
+| PsStateDxe            | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/PsStateDxe/PsStateDxe.inf                   | ✅              |
+| PwrUtilsDxe           | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/PwrUtilsDxe/PwrUtilsDxe.inf                 | ✅              |
+| QcomChargerDxeLA      | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/QcomChargerDxe/QcomChargerDxeLA.inf         | ✅              |
+| QcomMpmTimerDxe       | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/QcomMpmTimerDxe/QcomMpmTimerDxe.inf         | ✅              |
+| QcomWDogDxe           | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/QcomWDogDxe/QcomWDogDxe.inf                 | ✅              |
+| QdssDxe               | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/QdssDxe/QdssDxe.inf                         | ✅              |
+| QRKSDxe               | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/QRKSDxe/QRKSDxe.inf                         | ✅              |
+| RngDxe                | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/RNGDxe/RngDxe.inf                           | ✅              |
+| RpmhDxe               | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/RpmhDxe/RpmhDxe.inf                         | ✅              |
+| RscDxe                | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/RscDxe/RscDxe.inf                           | ✅              |
+| ScmDxeCompat          | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/TzDxe/ScmDxeCompat.inf                      | ✅              |
+| ScmDxeLA              | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/TzDxe/ScmDxeLA.inf                          | ✅              |
+| SdccDxe               | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/SdccDxe/SdccDxe.inf                         | ✅              |
+| SecRSADxe             | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/SecRSADxe/SecRSADxe.inf                     | ❌              |
+| SerialPortDxe         | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/SerialPortDxe/SerialPortDxe.inf             | ✅              |
+| ShmBridgeDxeLA        | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/ShmBridgeDxe/ShmBridgeDxeLA.inf             | ✅              |
+| SmemDxe               | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/SmemDxe/SmemDxe.inf                         | ✅              |
+| SPI                   | SPIDxe              | Binaries/[Device Codename]/QcomPkg/Drivers/SPIDxe/SPIDxe.inf                           | ✅              |
+| SPMI                  | SPMIDxe             | Binaries/[Device Codename]/QcomPkg/Drivers/SPMIDxe/SPMIDxe.inf                         | ✅              |
+| SPSSDxe               | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/SPSSDxe/SPSSDxe.inf                         | ✅              |
+| TsensDxe              | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/TsensDxe/TsensDxe.inf                       | ✅              |
+| TzDxeLA               | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/TzDxe/TzDxeLA.inf                           | ✅              |
+| UCDxe                 | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/UCDxe/UCDxe.inf                             | ✅              |
+| UFSDxe                | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/UFSDxe/UFSDxe.inf                           | ✅              |
+| ULogDxe               | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/ULogDxe/ULogDxe.inf                         | ✅              |
+| UsbConfigDxe          | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/UsbConfigDxe/UsbConfigDxe.inf               | ✅              |
+| UsbDeviceDxe          | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/UsbDeviceDxe/UsbDeviceDxe.inf               | ✅              |
+| UsbfnDwc3Dxe          | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/UsbfnDwc3Dxe/UsbfnDwc3Dxe.inf               | ✅              |
+| UsbInitDxe            | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/UsbInitDxe/UsbInitDxe.inf                   | ✅              |
+| UsbMsdDxe             | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/UsbMsdDxe/UsbMsdDxe.inf                     | ✅              |
+| UsbPwrCtrlDxe         | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/UsbPwrCtrlDxe/UsbPwrCtrlDxe.inf             | ✅              |
+| VcsDxe                | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/VcsDxe/VcsDxe.inf                           | ✅              |
+| VerifiedBootDxe       | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/VerifiedBootDxe/VerifiedBootDxe.inf         | ❌              |
+| XhciDxe               | ...                 | Binaries/[Device Codename]/QcomPkg/Drivers/XhciDxe/XhciDxe.inf                         | ✅              |
+| XhciPciEmulation      | XhciPciEmulationDxe | Binaries/[Device Codename]/QcomPkg/Drivers/XhciPciEmulationDxe/XhciPciEmulationDxe.inf | ✅              |
+
+### Samsung Drivers
+
+| UEFITool Driver Name | New Driver  Name | Driver Path                                                                               | Should be Added |
+|:---------------------|:-----------------|:------------------------------------------------------------------------------------------|:---------------:|
+| BoardInfo            | BoardInfoDxe     | Binaries/[Device Codename]/QcomPkg/Drivers/SamsungDxe/BoardInfoDxe/BoardInfoDxe.inf       | ✅              |
+| Ccic                 | CcicDxe          | Binaries/[Device Codename]/QcomPkg/Drivers/SamsungDxe/CcicDxe/CcicDxe.inf                 | ✅              |
+| Chg                  | ChgDxe           | Binaries/[Device Codename]/QcomPkg/Drivers/SamsungDxe/ChgDxe/ChgDxe.inf                   | ✅              |
+| Expander             | GpioExpanderDxe  | Binaries/[Device Codename]/QcomPkg/Drivers/SamsungDxe/GpioExpanderDxe/GpioExpanderDxe.inf | ✅              |
+| GuidedFv             | GuidedFvDxe      | Binaries/[Device Codename]/QcomPkg/Drivers/SamsungDxe/GuidedFvDxe/GuidedFvDxe.inf         | ✅              |
+| Muic                 | MuicDxe          | Binaries/[Device Codename]/QcomPkg/Drivers/SamsungDxe/MuicDxe/MuicDxe.inf                 | ✅              |
+| SubPmic              | SubPmicDxe       | Binaries/[Device Codename]/QcomPkg/Drivers/SamsungDxe/SubPmicDxe/SubPmicDxe.inf           | ✅              |
+| Vib                  | VibDxe           | Binaries/[Device Codename]/QcomPkg/Drivers/SamsungDxe/VibDxe/VibDxe.inf                   | ✅              |
+
+### Sony Drivers
+
+| UEFITool Driver Name | New Driver  Name | Driver Path                                                                    | Should be Added |
+|:---------------------|:-----------------|:-------------------------------------------------------------------------------|:---------------:|
+| BootCounterDxe       | ...              | Binaries/[Device Codename]/SomcOkg/Drivers/BootCounterDxe/BootCounterDxe.inf   | ✅              |
+| MazeDetDxe           | ...              | Binaries/[Device Codename]/SomcOkg/Drivers/MazeDetDxe/MazeDetDxe.inf           | ✅              |
+| ResetCfgDxe          | ...              | Binaries/[Device Codename]/SomcOkg/Drivers/ResetCfgDxe/ResetCfgDxe.inf         | ✅              |
+| SobaDxe              | ...              | Binaries/[Device Codename]/SomcOkg/Drivers/SobaDxe/SobaDxe.inf                 | ✅              |
+| StartFlagDxe         | ...              | Binaries/[Device Codename]/SomcOkg/Drivers/StartFlagDxe/StartFlagDxe.inf       | ✅              |
+| TaDxe                | ...              | Binaries/[Device Codename]/SomcOkg/Drivers/TaDxe/TaDxe.inf                     | ✅              |
+| XBootPALDxe          | ...              | Binaries/[Device Codename]/SomcOkg/Drivers/XBootPALDxe/XBootPALDxe.inf         | ✅              |
+| XDeviceTreeDxe       | ...              | Binaries/[Device Codename]/SomcOkg/Drivers/XDeviceTreeDxe/XDeviceTreeDxe.inf   | ✅              |
+| XDisplayDxe          | ...              | Binaries/[Device Codename]/SomcOkg/Drivers/XDisplayDxe/XDisplayDxe.inf         | ✅              |
+| XHwresetDxe          | ...              | Binaries/[Device Codename]/SomcOkg/Drivers/XHwresetDxe/XHwresetDxe.inf         | ✅              |
+| XOemCertDxe          | ...              | Binaries/[Device Codename]/SomcOkg/Drivers/XOemCertDxe/XOemCertDxe.inf         | ✅              |
+| XResetReasonDxe      | ...              | Binaries/[Device Codename]/SomcOkg/Drivers/XResetReasonDxe/XResetReasonDxe.inf | ✅              |
+
+### Xiaomi Drivers
+
+| UEFITool Driver Name | New Driver  Name | Driver Path                                                                  | Should be Added |
+|:---------------------|:-----------------|:-----------------------------------------------------------------------------|:---------------:|
+| MiTokenDxe           | MiToken          | Binaries/[Device Codename]/MiPkg/Protocol/MiToken/MiToken.inf                | ❌              |
+| ProjectInfoDxeDriver | ProjectInfoDxe   | Binaries/[Device Codename]/QcomPkg/Drivers/ProjectInfoDxe/ProjectInfoDxe.inf | ✅              |
 
 ## Creating ACPI.inc (Step 3.2.1)
 
@@ -547,11 +753,11 @@ The INF can be copied from any other Device.
 ## Creating DeviceMemoryMap Library (Step 3.4)
 
 Lets move on making Memory Map. <br />
-We will use uefiplat.cfg to create the Memory Map. <br />
+For Snapdragon 8 Gen 2 (SM8550) or older SoCs we will use uefiplat.cfg to create the Memory Map. <br />
 Create a Folder Named `DeviceMemoryMapLib` in `Mu-Silicium/Platforms/<Device Vendor>/<Device Codename>Pkg/Library/`. <br />
 After that create two Files called `DeviceMemoryMapLib.c` and `DeviceMemoryMapLib.inf`. <br />
 
-You can either make the Memory Map by yourself or use an automated [Script](https://gist.github.com/N1kroks/0b3942a951a2d4504efe82ab82bc7a50) if your SoC is older than Snapdragon 8 Gen 3 (SM8650). <br />
+You can either make the Memory Map by yourself or use an automated [Script](https://gist.github.com/N1kroks/0b3942a951a2d4504efe82ab82bc7a50)<br />
 >NOTE: script also create Configuration Map, remove it from Memory Map
 
 If you want to make the Memory Map by yourself, here is a template for the .c File:
@@ -561,13 +767,17 @@ If you want to make the Memory Map by yourself, here is a template for the .c Fi
 STATIC
 ARM_MEMORY_REGION_DESCRIPTOR_EX
 gDeviceMemoryDescriptorEx[] = {
-  // Name, Address, Length, HobOption, ResourceAttribute, ArmAttributes, ResourceType, MemoryType
+  // Name                   Address     Length    HobOpt  ResType  ResAttribute MemType   ArmAttribute (Cache)
+  // DDR Regions          ----------- ----------- ------- -------- ------------ ------- ------------------------
 
-  // DDR Regions
 
-  // Other memory regions
+  // Name                   Address     Length    HobOpt  ResType  ResAttribute MemType   ArmAttribute (Cache)
+  // Other memory regions ----------- ----------- ------- -------- ------------ ------- ------------------------
 
-  // Register regions
+
+  // Name                   Address     Length    HobOpt  ResType  ResAttribute MemType   ArmAttribute (Cache)
+  // Register regions     ----------- ----------- ------- -------- ------------ ------- ------------------------
+
 
   // Terminator for MMU
   {"Terminator", 0, 0, 0, 0, 0, 0, 0}
@@ -592,7 +802,100 @@ Do that with every Memory Region but if there's an `#` is infront of an Memory R
 
 After that it should look something like [this](https://github.com/Robotix22/Mu-Silicium/blob/main/Platforms/Xiaomi/limePkg/Library/DeviceMemoryMapLib/DeviceMemoryMapLib.c).
 
-The INF can be copied from any other Device.
+
+For Snapdragon 8(s) Gen 3 (SM8650/SM8635) or newer devices we will use `post-ddr-<platform codename>-1.0.dts` from `xbl_config.img`, since Qualcomm have changed MemoryMap format. <br />
+
+You can either make the Memory Map by yourself or use an automated [Script](https://gist.github.com/N1kroks/0b3942a951a2d4504efe82ab82bc7a50)<br />
+>NOTE: script also create Configuration Map, remove it from Memory Map
+
+Unpack `xbl_config.img`, which we have extracted earlier from your device, using [XBLConfigReader](https://github.com/Project-Aloha/XBLConfigReader). <br />
+A Compiled Version is pinned in `#general` in our Discord server. <br />
+Also you can compile it yourself:
+```
+# Linux
+# Install cmake for your distribution
+git clone https://github.com/woa-msmnile/XBLConfigReader --depth=1
+cd XBLConfigReader
+mkdir build && cd build
+cmake -S .. && cmake --build .
+mkdir out
+# Now here you have a compiled version. Go to XBLConfigReader/build/
+```
+Here is how you Use it:
+```
+# Windows
+¯\_(ツ)_/¯
+# Linux
+./xcreader <xbl_config Partition>.img out
+```
+After you unpacked `xbl_config.img`, go into `out` directory and find a file called `post-ddr-<platform codename>-1.0.dtb`. convert it into `.dts` file:
+```
+dtc -I dtb -O dts -o post-ddr-<platform codename>-1.0.dts post-ddr-<platform codename>-1.0.dtb
+```
+Now lets take a closer look at new MemoryMap format:
+```
+# This is an example region.
+memory@80000000 {
+  device_type = "memory";
+  reg = <0x00 0x80000000 0x00 0x16e0000>;
+  MemLabel = "NOMAP";
+  ResourceAttribute = <0x400>;
+  BuildHob = [09];
+  ResourceType = [05];
+  MemoryType = [00];
+  CacheAttributes = [25];
+};
+```
+If you translate that into C it would look like this:
+```c
+// Name                   Address     Length    HobOpt  ResType  ResAttribute MemType   ArmAttribute (Cache)
+// Register regions     ----------- ----------- ------- -------- ------------ ------- ------------------------
+{"NOMAP",               0x80000000, 0x016e0000, AddMem, MEM_RES, UNCACHEABLE, Reserv, UNCACHED_UNBUFFERED_XN},
+```
+Also, If a Name has a `_`, Replace it with a Space. <br />
+Here is a List What from the DTB Memory Region is what in your C Code:
+
+> [!WARNING]
+> Don't add Memory regions with BuildHop = `09` / `NoMap` <br>
+
+**ResourceAttribute:** <br />
+`0x400 `   = `UNCACHEABLE` <br />
+`0x703C07` = `SYS_MEM_CAP` <br />
+`0x02`     = `INITIALIZED` <br />
+
+
+**BuildHob:** <br />
+`0A` = `AddDynamicMem (Use AddMem instead)` <br />
+`09` = `NoMap` (Don't add Memory Region if it has this) <br />
+`05` = `AddDev` <br />
+`04` = `NoHob` <br />
+`00` = `AddMem` <br />
+
+
+**ResourceType:** <br />
+`05` = `MEM_RES` <br />
+`01` = `MMAP_IO` <br />
+`00` = `SYS_MEM` <br />
+
+
+**MemoryType:** <br />
+`0B` = `MmIO` <br />
+`07` = `Conv` <br />
+`04` = `BsData` <br />
+`00` = `Reserv` <br />
+`06` = `RtData` <br />
+
+
+**CacheAttributes:** <br />
+`25` = `UNCACHED_UNBUFFERED_XN` <br />
+`22` = `WRITE_BACK_XN` <br />
+`20` = `WRITE_THROUGH_XN` <br />
+`02` = `WRITE_BACK` <br />
+`09` = `NS_DEVICE` <br />
+
+After that it should look something like [this](https://github.com/Project-Silicium/Mu-Silicium/blob/main/Platforms/Realme/balePkg/Library/DeviceMemoryMapLib/DeviceMemoryMapLib.c)
+
+When you are done with MemoryMap, copy INF file from any other Device.
 
 ## Creating Android Boot Image Script (Step 3.5)
 
