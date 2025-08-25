@@ -30,6 +30,7 @@
 
 | SoC     | Script                                      |
 |:--------|:--------------------------------------------|
+| SM8750  | [MassStorage.sh](0x0A600000/MassStorage.sh) |
 | SM8635  | [MassStorage.sh](0x0A600000/MassStorage.sh) |
 | SM8550  | [MassStorage.sh](0x0A600000/MassStorage.sh) |
 | SM8450  | [MassStorage.sh](0x0A600000/MassStorage.sh) |
