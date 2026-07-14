@@ -14,9 +14,9 @@ This Guide will show you how to make an UEFI port for an Snapdragon SoC.
   
 - Adding SoCs
     - [Structure for the platform package](#Structure-for-the-platform-package)
-        - [Creating .dsc.inc file](#Creating-.dsc.inc-file)
-        - [Creating "PlatformSecLib" library](#modify-dsc.inc-file-step-12)
-          - [PlatformHelper.S](#PlatformHelper.S)
+        - [Creating .dsc.inc file](#Creating-dscinc-file)
+        - [Creating "PlatformSecLib" library](#Creating-PlatformSecLib-library)
+          - ["PlatformHelper.S" file](#PlatformHelperS-file)
           - [PlatformSec](#PlatformSec)
 
 </td></tr>

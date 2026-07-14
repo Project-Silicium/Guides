@@ -428,8 +428,8 @@ For Now, Leave it Empty, When your UEFI is working stable then you can Follow th
 We continue with `APRIORI.inc`, Create `APRIORI.inc` in `Mu-Silicium/Platforms/<Device Vendor>/<Device Codename>Pkg/Include/`. <br />
 Now we need the order of the Binaries in `APRIORI.inc`, Use UEFITool to get the Order:
 
-![Preview](../../Resources/Pictures/Device-porting-1.png.png)
-![Preview](../../Resources/Pictures/Device-porting-2.png.png)
+![Preview](../../Resources/Pictures/Device-porting-1.png)
+![Preview](../../Resources/Pictures/Device-porting-2.png)
 
 Next we place all the Binaries in `APRIORI.inc` like this:
 ```
