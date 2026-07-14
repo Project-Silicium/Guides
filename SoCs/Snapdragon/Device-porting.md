@@ -1,8 +1,5 @@
 # Adding Devices
 
-> [!WARNING]
-> This Guide is Outdated! A Remaster will come soon.
-
 ## Description
 
 This Guide will show you how to create a UEFI Port for your Device. <br />
@@ -41,9 +38,9 @@ This Guide will show you how to create a UEFI Port for your Device. <br />
 
 To Port UEFI to your Phone, It needs the following things:
 
-- An Snapdragon SoC
-- `xbl` or `uefi` in `/dev/block/by-name/`
-- `fdt` in `/sys/firmware/`
+- Device with UEFI-based AARCH64 Snapdragon SoC (MSM8996 or newer)
+- Dump of `xbl` / `uefi` image from `/dev/block/by-name/`
+- Dump of `fdt` image from `/sys/firmware/`
 
 It's also recommended to have already some Knowledge about Linux and Windows. <br />
 ~~Also a Brain is required to do this.~~ <br />
@@ -431,8 +428,8 @@ For Now, Leave it Empty, When your UEFI is working stable then you can Follow th
 We continue with `APRIORI.inc`, Create `APRIORI.inc` in `Mu-Silicium/Platforms/<Device Vendor>/<Device Codename>Pkg/Include/`. <br />
 Now we need the order of the Binaries in `APRIORI.inc`, Use UEFITool to get the Order:
 
-![Preview](Pictures/APRIORI1.png)
-![Preview](Pictures/APRIORI2.png)
+![Preview](../../Resources/Pictures/Device-porting-1.png)
+![Preview](../../Resources/Pictures/Device-porting-2.png)
 
 Next we place all the Binaries in `APRIORI.inc` like this:
 ```
@@ -462,7 +459,7 @@ Check other Devices APRIORI.inc File to get an Idea, What to replace with the Mu
 After that we can now move on to `DXE.inc`, Create `DXE.inc` in `Mu-Silicium/Platforms/<Device Vendor>/<Device Codename>Pkg/Include/`. <br />
 Now again we need the Order, To get the order of `DXE.inc` Open `xbl` or `uefi` in UEFITool and Expand the FV(s), Then you see the Order. <br />
 
-![Preview](Pictures/DXE.png)
+![Preview](../../Resources/Pictures/Device-porting-3.png)
 
 Again we place all the Binaries like this:
 ```

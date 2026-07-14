@@ -36,7 +36,7 @@ Before you can Begin Fixing your UFS LUNs, You need some Files for that. <br>
 Check the [UEFI Status Page](https://github.com/Project-Silicium/Mu-Silicium/blob/main/Status.md) for your Device if it Supports `Mass Storage`. <br>
 If it does not Support it, Contact us on Discord for Help.
 
-![Preview](Pictures/Preview-1.png)
+![Preview](../../Resources/Pictures/Fixing-UFS-LUNs-1.png)
 
 Once you Checked if your Device supports Mass Storage, Download the latest UEFI Image for your Device from [Requirements](#requirements). <br>
 After that also Download the gdisk for Windows from [Requirements](#requirements). <br>
@@ -52,13 +52,13 @@ Flash or Boot the UEFI Image you Downloaded in [Preparing](#preparing). <br>
 Once you did that, Reboot your Device and Hold Volume Down once you see the Project Silicium Logo to enter Mass Storage. <br>
 If you did that Correctly, You should see a Blue Phone on your Device now:
 
-![Preview](Pictures/Preview-2.png)
+![Preview](../../Resources/Pictures/Fixing-UFS-LUNs-2.png)
 
 At the Bottom of your Screen is some Text, Press the Volume Buttons until you see: `Current LUN: 0`. <br>
 Once it says that, Press the Power Button to Confirm, Connect your Device now to your PC. <br>
 Your PC should see a Large Disk with way to many Partitions in Disk Manager:
 
-![Preview](Pictures/Preview-3.png)
+![Preview](../../Resources/Pictures/Fixing-UFS-LUNs-3.png)
 
 If you get a new Disk with one Large Unformatted Partition instead, ***Don't* Reboot your Device!**. <br>
 Get the Disk Number of the new Disk, In the Picture it's `2`. <br>
@@ -72,8 +72,8 @@ After that, Just run gdisk on the new Disk:
 
 You should now see Text like in this Pictures:
 
-![Preview](Pictures/Preview-4.png)
-![Preview](Pictures/Preview-5.png)
+![Preview](../../Resources/Pictures/Fixing-UFS-LUNs-4.png)
+![Preview](../../Resources/Pictures/Fixing-UFS-LUNs-5.png)
 
 If you see the GPT Corrupted Warning in your Command Prompt like in the second Picture, then you need to Repair the GPT Table. <br>
 Otherwise you can Skip this Step to repair the GPT Table.
@@ -111,7 +111,7 @@ Save the Changes by entering `w` and confirming with `y`.
 
 Now reopen gdisk again and Check if you see Corrupted GPT Warning:
 
-![Preview](Pictures/Preview-5.png)
+![Preview](../../Resources/Pictures/Fixing-UFS-LUNs-5.png)
 
 If you do, Enter `r`, then enter `c` and confirm with `y`, That Fixes the GPT Table, <br>
 Now save the Changes again using `w` and confirming with `y`.

@@ -51,8 +51,8 @@ Samsung sets their UFS on Snapdragon Devices Offline which breaks Windows / Linu
 Open Disk Manager on your PC and Find the Disk with way to many Partitions. <br>
 Right Click the Disk and Press `Online`.
 
-![Preview](Pictures/Preview-1.png)
-![Preview](Pictures/Preview-2.png)
+![Preview](../../Resources/Pictures/UFS-Modding-1.png)
+![Preview](../../Resources/Pictures/UFS-Modding-2.png)
 
 Now Windows set it to Online and it should now be one Large Unformated Partition. <br>
 Whatever you do, ***Don't* Reboot your Device!** <br>
@@ -71,7 +71,7 @@ chmod 744 /cache/gdisk
 ```
 Once you Executed the Commands you should see a GPT Corrupted Warning:
 
-![Preview](Pictures/Preview-3.png)
+![Preview](../../Resources/Pictures/UFS-Modding-3.png)
 
 Run these Commands in gdisk to Repair your GPT, First Enter `r`, That will Enter the Recovery Options. <br>
 Then Enter `c`, That will now Repair your GPT, Now just Enter `w` and Confirm with `y` to Write the Changes. <br>
