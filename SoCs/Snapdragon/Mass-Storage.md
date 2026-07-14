@@ -1,10 +1,5 @@
 # Using TWRP Mass Storage
 
-## Video Guide
-
-> [!NOTE]
-> No Video Guide here yet.
-
 ## Text Guide [Recommended]
 
 <table>
